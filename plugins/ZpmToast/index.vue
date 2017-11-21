@@ -27,8 +27,8 @@
         top: 40px;
     }
     .zpm-toast-container-center {
-        padding-left: 150px;
-        padding-right: 150px;
+        padding-left: 100px;
+        padding-right: 100px;
     }
     .zpm-toast-inner-center {
         /*max-width: 500px;*/
