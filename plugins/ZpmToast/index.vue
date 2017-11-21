@@ -1,6 +1,6 @@
 <template>
     <div class="zpm-toast-container" style="width: 750px;" :class="['zpm-toast-container-' + options.position]" :style="{height: deviceInfo.deviceWidth + 'px'}">
-        <div class="zpm-toast-inner" :ref="ref" :class="['zpm-toast-inner-' + options.position, 'zpm-toast-inner-' + options.type]">
+        <div class="zpm-toast-inner" :ref="ref" :class="['zpm-toast-inner-' + options.position, 'zpm-toast-inner-' + options.type]" :style="{'background-color': options.bgColor}">
             <text class="zpm-toast-content" :style="{color: options.color || '#FFFFFF'}">{{options.content}}</text>
         </div>
     </div>
