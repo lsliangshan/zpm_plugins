@@ -1,6 +1,9 @@
 <template>
-    <div class="zpm-toast-container" style="width: 750px;" :class="['zpm-toast-container-' + options.position]" :style="{height: deviceInfo.deviceWidth + 'px'}">
-        <div class="zpm-toast-inner" :ref="ref" :class="['zpm-toast-inner-' + options.position, 'zpm-toast-inner-' + options.type]" :style="{'background-color': options.bgColor}">
+    <div class="zpm-toast-container" style="background-color: lightblue;" :class="['zpm-toast-container-' + options.position]" :style="{height: getHeight(1) + 'px'}">
+        <div class="zpm-toast-inner" :ref="ref" :class="['zpm-toast-inner-' + options.position, 'zpm-toast-inner-' + options.type]" :style="[options.styles]" v-if="!options.bgColor">
+            <text class="zpm-toast-content" :style="{color: options.color || '#FFFFFF'}">{{options.content}}</text>
+        </div>
+        <div class="zpm-toast-inner" :ref="ref" :class="['zpm-toast-inner-' + options.position, 'zpm-toast-inner-' + options.type]" v-else :style="[options.styles, {'background-color': options.bgColor}]">
             <text class="zpm-toast-content" :style="{color: options.color || '#FFFFFF'}">{{options.content}}</text>
         </div>
     </div>
@@ -78,10 +81,12 @@
           duration: 3000,
           bgColor: '',
           color: '',
+          styles: {},
           shown: false,
           timeout: null
         },
-        deviceInfo: weex.config.env
+        deviceInfo: weex.config.env,
+        dpr: weex.config.env.dpr || weex.config.env.scale || 1
       };
     },
     computed: {
@@ -101,6 +106,21 @@
       }
     },
     methods: {
+      getHeight (percent) {
+        let _per
+        try {
+          _per = parseFloat(percent)
+        } catch (err) {
+          _per = 1
+        }
+        let _h = 0
+        if (this.deviceInfo.platform.toLowerCase() === 'web') {
+          _h = this.deviceInfo.deviceHeight / this.deviceInfo.dpr
+        } else {
+          _h = 750 / this.deviceInfo.deviceWidth * this.deviceInfo.deviceHeight
+        }
+        return parseFloat(_per) * _h
+      },
       show (el) {
         const that = this
         animation.transition(el, {
