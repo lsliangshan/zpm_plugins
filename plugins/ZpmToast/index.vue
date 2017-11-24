@@ -1,5 +1,5 @@
 <template>
-    <div class="zpm-toast-container" style="background-color: lightblue;" :class="['zpm-toast-container-' + options.position]" :style="{height: getHeight(1) + 'px'}">
+    <div class="zpm-toast-container" :class="['zpm-toast-container-' + options.position]" :style="{height: getHeight(1) + 'px'}">
         <div class="zpm-toast-inner" :ref="ref" :class="['zpm-toast-inner-' + options.position, 'zpm-toast-inner-' + options.type]" :style="[options.styles]" v-if="!options.bgColor">
             <text class="zpm-toast-content" :style="{color: options.color || '#FFFFFF'}">{{options.content}}</text>
         </div>
@@ -89,8 +89,6 @@
         dpr: weex.config.env.dpr || weex.config.env.scale || 1
       };
     },
-    computed: {
-    },
     components: {},
     created () {
       const that = this
@@ -98,11 +96,13 @@
         Object.assign(that.options, args, {
           shown: true
         })
+        that.show(that.$refs[that.ref])
       }
       that.$root.hideToast = function () {
         Object.assign(that.options, {
           shown: false
         })
+        that.hide(that.$refs[that.ref])
       }
     },
     methods: {
@@ -125,27 +125,18 @@
         const that = this
         animation.transition(el, {
           styles: {
-            opacity: 0
+            opacity: 1
           },
-          duration: 1,
-          delay: 0,
+          duration: 300,
+          delay: 1,
           timingFunction: 'ease'
         }, function () {
-          animation.transition(el, {
-            styles: {
-              opacity: 1
-            },
-            duration: 300,
-            delay: 0,
-            timingFunction: 'ease'
-          }, function () {
-            if (that.options.timeout) {
-              clearTimeout(that.options.timeout)
-            }
-            that.options.timeout = setTimeout(function () {
-              that.hide(el)
-            }, that.options.duration)
-          })
+          if (that.options.timeout) {
+            clearTimeout(that.options.timeout)
+          }
+          that.options.timeout = setTimeout(function () {
+            that.hide(el)
+          }, that.options.duration)
         })
       },
       hide (el) {
@@ -160,17 +151,6 @@
           delay: 0,
           timingFunction: 'ease'
         })
-      }
-    },
-    watch: {
-      'options.shown': function (value) {
-        const that = this
-        let toastEl = this.$refs[this.ref]
-        if (value) {
-          that.show(toastEl)
-        } else {
-          that.hide(toastEl)
-        }
       }
     }
   };
