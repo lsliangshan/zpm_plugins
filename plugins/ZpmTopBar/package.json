@@ -1,0 +1,9 @@
+{
+  "name": "ZpmTopBar",
+  "version": "0.0.1",
+  "description": "自定义TopBar组件",
+  "author": {
+    "name": "wjx",
+    "email": "jianxin.wang@zhaopin.com.cn"
+  }
+}
