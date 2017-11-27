@@ -1,10 +1,9 @@
 <template>
-    <!--<div class="zpm-msg-container" ref="box" :style="{ width:deviceInfo.deviceWidth+'px', height:deviceInfo.deviceHeight+'px', transform: 'translate3D('+ 0 +'px, '+ deviceInfo.deviceHeight +'px, '+ 0 +'px)'}">-->
-    <div class="zpm-msg-container" ref="box" :style="[styles, { width:deviceInfo.deviceWidth/2+'px', height:getHeight(1)+'px'}]">
+    <div class="zpm-msg-container" ref="box" :style="[styles, animStyle]"  @touchend="hide">
         <div class="msg-content">
             <slot></slot>
         </div>
-        <div class="close-wrap" :style="{width:deviceInfo.deviceWidth/2+'px'}">
+        <div class="close-wrap" :style="{width:styles.width}">
             <div class="close-btn" @touchend="hide">
                 <div class="left-line"></div>
                 <div class="right-line"></div>
@@ -12,22 +11,19 @@
         </div>
     </div>
 </template>
-<style scoped>
+<style>
   .zpm-msg-container {
     position: fixed;
     left: 0;
     top: 0;
     justify-content: center;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.5);
   }
   .close-wrap {
-    /*width:750px;*/
-    height: 100px;
+    height: 120px;
     position: absolute;
     bottom: 0;
     left: 0;
-    background-color: rgba(255, 255, 255, 1);
     flex-direction: row;
     align-items: center;
     justify-content: center;
@@ -35,21 +31,20 @@
   .close-btn {
     width: 100px;
     height: 100px;
-    background-color: transparent;
     flex-direction: row;
     justify-content: center;
     align-items: center;
   }
   .left-line {
-    height: 50px;
+    height: 45px;
     width: 2px;
-    background-color: black;
+    background-color: #bbb;
     transform: rotate(45deg);
   }
   .right-line {
-    height: 50px;
+    height: 45px;
     width: 2px;
-    background-color: black;
+    background-color: #bbb;
     transform: rotate(-45deg);
   }
 </style>
@@ -61,70 +56,134 @@
       return {
         options: {
           type: '',
-          animationIn: 'slideLeft',
-          content: '',
+          animationIn: 'slideUp',
           bgColor: '',
-          color: ''
+          timingFunction: 'cubic-bezier(.215,.61,.355,1)',
+          duration: 300,
+          delay: 0
         },
-        styles: {},
+        styles: {}, // 默认样式
+        animStyle: {}, // 动画样式
         deviceInfo: weex.config.env,
         el: '',
-        showType: '',
-        hideType: ''
+        showType: ''
       };
     },
     computed: {},
     components: {},
-    created() {
-      const that = this;
-      that.$root.showMsgBox = function(args) {
-        Object.assign(that.options, args);
-
-        that.initPosition(that.options);
-
-        console.log(that.styles);
-
-        setTimeout(function() {
-          that.show();
-        }, 100);
-      };
-    },
+    created() {},
     mounted() {
       this.el = this.$refs.box;
+      let width = this.getRect(1).width;
+      let height = this.getRect(1).height;
+      // 初始化默认样式
+      this.styles = {
+        width: `${width}px`,
+        height: `${height}px`,
+        transformOrigin: 'center center'
+      };
+      // 初始化动画样式
+      this.animStyle = {
+        transform: `translate(0, ${height}px)`,
+        opacity: 1
+      };
+
+      // var param = this.animParam();
+      // param.styles = {
+      //   transform: `translate3d(0, ${height * 2}px, 0)`,
+      //   transformOrigin: 'center center',
+      //   opacity: 1
+      // };
+      // animation.transition(this.el, param, function() {});
+
+      this.$root.showMsgBox = args => {
+        Object.assign(this.options, args);
+        // 初始化动画入场的初始位置
+        this.initAnimStyle();
+
+        setTimeout(() => {
+          this.show();
+        }, 30);
+      };
     },
     methods: {
-      initPosition(options) {
-        let stylesObj = {};
-        let animationStyle = options.animationIn;
+      // 初始化动画样式
+      initAnimStyle() {
+        let options = this.options;
+
+        let animationStyle = this.options.animationIn;
+
+        // 初始化背景色
+        this.$set(
+          this.styles,
+          'backgroundColor',
+          options.bgColor || 'rgba(255, 255, 255, 1)'
+        );
+        this.$set(this.styles, 'display', 'block');
+
         // 判断显示类型，类型：slide|fade
-        this.showType = /slide|fade/g.exec(options.animationIn)[0];
-        // console.log(`类型:${this.showType}`);
+        this.showType = /slide|fade/g.exec(animationStyle)[0];
+        // 不传入执行时间，即初始化动画位置时不需要动画
+        this.initPosition();
+      },
+      // 初始化show的进入位置或hide的结束位置
+      initPosition(isDuration) {
+        let animationStyle = this.options.animationIn;
+        let stylesObj = {};
+        let width = this.getRect(1).width * 2;
+        let height = this.getRect(1).height * 2;
         // 初始化slide位置或fade透明度
         switch (animationStyle) {
           case 'slideUp':
-            stylesObj.transform = `translate3d(0, ${this.getHeight(1)}px, 0)`;
+            stylesObj.transform = `translate(0, ${height}px)`;
             break;
           case 'slideDown':
-            stylesObj.transform = `translate3d(0, ${-this.getHeight(1)}px, 0)`;
+            stylesObj.transform = `translate(0, ${-height}px)`;
             break;
           case 'slideLeft':
-            stylesObj.transform = `translate3d(${-this.getHeight(1)}px, 0, 0)`;
+            stylesObj.transform = `translate(${-width}px, 0)`;
             break;
           case 'slideRight':
-            stylesObj.transform = `translate3d(${this.getHeight(1)}px, 0, 0)`;
+            stylesObj.transform = `translate(${width}px, 0)`;
             break;
           case 'fadeIn':
-            stylesObj.transform = 'translate3d(0, 0, 0)';
+            stylesObj.transform = 'translate(0, 0)';
             stylesObj.opacity = 0;
             break;
           default:
-            stylesObj.transform = `translate3d(0, ${this.getHeight(1)}px, 0)`;
+            stylesObj.transform = `translate(0, ${height}px)`;
         }
-        this.styles = stylesObj;
-        console.log('uuuuuuuu', this.styles);
-        return this.styles;
+        if (isDuration) {
+          let that = this;
+          let param = this.animParam(isDuration);
+          param.styles = {
+            transform: stylesObj.transform,
+            transformOrigin: 'center center',
+            opacity: stylesObj.opacity
+          };
+          animation.transition(this.el, param, function() {
+            if (animationStyle === 'fadeIn') {
+              stylesObj.display = 'none';
+              that.animStyle = stylesObj;
+            }
+          });
+        } else {
+          // show时更新动画的初始样式
+          this.animStyle = stylesObj;
+        }
+        // this.animStyle = stylesObj;
+        // var param = this.animParam(isDuration);
+        // param.styles = {
+        //   transform: stylesObj.transform,
+        //   transformOrigin: 'center center',
+        //   opacity: stylesObj.opacity
+        // };
+        // animation.transition(this.el, param, function() {
+        //   console.log('animation----2');
+        // });
       },
-      getHeight(percent) {
+
+      getRect(percent) {
         let _per;
         try {
           _per = parseFloat(percent);
@@ -132,111 +191,38 @@
           _per = 1;
         }
         let _h = 0;
+        let _w = 0;
         if (this.deviceInfo.platform.toLowerCase() === 'web') {
           _h = this.deviceInfo.deviceHeight / this.deviceInfo.dpr;
+          _w = this.deviceInfo.deviceWidth / this.deviceInfo.dpr;
         } else {
           _h = 750 / this.deviceInfo.deviceWidth * this.deviceInfo.deviceHeight;
+          _w = 750;
         }
-        return parseFloat(_per) * _h;
+        return {
+          height: parseFloat(_per) * _h,
+          width: parseFloat(_per) * _w
+        };
       },
       show() {
-        const that = this;
-        console.log('-------', this.showType);
-        if (this.showType === 'slide') {
-          animation.transition(
-            this.el,
-            {
-              styles: {
-                transform: 'translate3d(0, 0, 0)',
-                transformOrigin: 'center center'
-              },
-              duration: 600,
-              timingFunction: 'ease-in',
-              needLayout: false,
-              delay: 0
-            },
-            function() {
-              console.log('animation----2');
-            }
-          );
-        } else if (this.showType === 'fade') {
-          console.log('进来');
-          animation.transition(
-            this.el,
-            {
-              styles: {
-                transform: 'scale(1)'
-              },
-              duration: 10,
-              timingFunction: 'ease',
-              needLayout: false,
-              delay: 0
-            },
-            function() {
-              animation.transition(
-                that.el,
-                {
-                  styles: {
-                    opacity: 1
-                  },
-                  duration: 300,
-                  timingFunction: 'ease',
-                  needLayout: false,
-                  delay: 0
-                },
-                function() {
-                  console.log('show opacity');
-                }
-              );
-            }
-          );
-        }
+        let param = this.animParam(true);
+        param.styles = {
+          transform: 'translate(0, 0)',
+          transformOrigin: 'center center',
+          opacity: 1
+        };
+        animation.transition(this.el, param, function() {});
       },
       hide() {
-        console.log('+++++++', this.styles);
-        const that = this;
-        const reCaluStyles = this.initPosition(this.options);
-        console.log('sjkjfskhskhf', this.options, reCaluStyles);
-        if (this.showType === 'slide') {
-          animation.transition(
-            this.el,
-            {
-              styles: reCaluStyles,
-              duration: 900, // ms
-              timingFunction: 'ease',
-              needLayout: false,
-              delay: 0 // ms
-            },
-            function() {
-              console.log('hide slide');
-            }
-          );
-        } else if (this.showType === 'fade') {
-          console.log('hide opacity input');
-          animation.transition(
-            this.el,
-            {
-              styles: {
-                opacity: 0
-              },
-              duration: 300, // ms
-              timingFunction: 'ease',
-              needLayout: false,
-              delay: 0 // ms
-            },
-            function() {
-              animation.transition(that.el, {
-                styles: {
-                  transform: 'scale(0)'
-                },
-                duration: 10, // ms
-                timingFunction: 'ease',
-                needLayout: false,
-                delay: 0 // ms
-              });
-            }
-          );
-        }
+        this.initPosition(true);
+      },
+      animParam(isDuration) {
+        return {
+          duration: isDuration ? this.options.duration : 0,
+          timingFunction: this.options.timFun,
+          needLayout: false,
+          delay: this.options.delay
+        };
       }
     },
     watch: {}
