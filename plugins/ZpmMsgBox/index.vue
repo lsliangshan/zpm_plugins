@@ -1,15 +1,16 @@
 <template>
-    <div class="zpm-msg-container" ref="box" :style="[styles, animStyle]"  @touchend="hide">
-        <div class="msg-content">
-            <slot></slot>
-        </div>
-        <div class="close-wrap" :style="{width:styles.width}">
-            <div class="close-btn" @touchend="hide">
-                <div class="left-line"></div>
-                <div class="right-line"></div>
-            </div>
-        </div>
+  <div class="zpm-msg-container" ref="box" :style="[styles, animStyle]"  @touchend="hide">
+    <div class="msg-content">
+      <slot></slot>
+      <web v-if="options.type === 'h5'" :src="options.url" :style="[webViweStyle]"></web>
     </div>
+    <div class="close-wrap" :style="{width:styles.width}">
+      <div class="close-btn" @touchend="hide">
+        <div class="left-line"></div>
+        <div class="right-line"></div>
+      </div>
+    </div>
+  </div>
 </template>
 <style>
   .zpm-msg-container {
@@ -55,15 +56,20 @@
     data() {
       return {
         options: {
-          type: '',
+          type: 'weex',
           animationIn: 'slideUp',
           bgColor: '',
           timingFunction: 'cubic-bezier(.215,.61,.355,1)',
           duration: 300,
-          delay: 0
+          delay: 0,
+          componentName: '',
+          content:
+            '<div style="position: absolute; top:200px;left:100px"><text style="color:white">测试测试</text></div>',
+          url: ''
         },
         styles: {}, // 默认样式
         animStyle: {}, // 动画样式
+        webViweStyle: {},
         deviceInfo: weex.config.env,
         el: '',
         showType: ''
@@ -79,9 +85,10 @@
       // 初始化默认样式
       this.styles = {
         width: `${width}px`,
-        height: `${height}px`,
-        transformOrigin: 'center center'
+        height: `${height}px`
+        // transformOrigin: 'center center'
       };
+
       // 初始化动画样式
       this.animStyle = {
         transform: `translate(0, ${height}px)`,
@@ -97,10 +104,11 @@
       // animation.transition(this.el, param, function() {});
 
       this.$root.showMsgBox = args => {
-        Object.assign(this.options, args);
+        this.options = Object.assign({}, this.options, args);
         // 初始化动画入场的初始位置
         this.initAnimStyle();
-
+        // 传回组件信息
+        this.$root.ZpmMsgBox = this.options;
         setTimeout(() => {
           this.show();
         }, 30);
@@ -125,13 +133,21 @@
         this.showType = /slide|fade/g.exec(animationStyle)[0];
         // 不传入执行时间，即初始化动画位置时不需要动画
         this.initPosition();
+        // 初始化webview的宽高
+        setTimeout(() => {
+          this.initWebViweStyle();
+        }, 0);
       },
       // 初始化show的进入位置或hide的结束位置
       initPosition(isDuration) {
         let animationStyle = this.options.animationIn;
         let stylesObj = {};
-        let width = this.getRect(1).width * 2;
-        let height = this.getRect(1).height * 2;
+        let width = this.getRect(1).width;
+        let height = this.getRect(1).height;
+        if (this.deviceInfo.platform.toLowerCase() === 'web') {
+          width = width * 2;
+          height = height * 2;
+        }
         // 初始化slide位置或fade透明度
         switch (animationStyle) {
           case 'slideUp':
@@ -182,7 +198,16 @@
         //   console.log('animation----2');
         // });
       },
-
+      // 初始化webview的样式函数
+      initWebViweStyle() {
+        let width = this.getRect(1).width;
+        let height = this.getRect(1).height;
+        // 初始化webview的样式
+        this.webViweStyle = {
+          width: `${width}px`,
+          height: `${height - 120}px`
+        };
+      },
       getRect(percent) {
         let _per;
         try {
@@ -208,7 +233,7 @@
         let param = this.animParam(true);
         param.styles = {
           transform: 'translate(0, 0)',
-          transformOrigin: 'center center',
+          // transformOrigin: 'center center',
           opacity: 1
         };
         animation.transition(this.el, param, function() {});
