@@ -88,13 +88,13 @@
         opacity: 1
       };
 
-      /* var param = this.animParam();
-      param.styles = {
-        transform: `translate3d(0, ${height * 2}px, 0)`,
-        transformOrigin: 'center center',
-        opacity: 1
-      };
-      animation.transition(this.el, param, function() { }); */
+      // var param = this.animParam();
+      // param.styles = {
+      //   transform: `translate3d(0, ${height * 2}px, 0)`,
+      //   transformOrigin: 'center center',
+      //   opacity: 1
+      // };
+      // animation.transition(this.el, param, function() {});
 
       this.$root.showMsgBox = args => {
         Object.assign(this.options, args);
@@ -171,16 +171,16 @@
           // show时更新动画的初始样式
           this.animStyle = stylesObj;
         }
-        /*  this.animStyle = stylesObj;
-        var param = this.animParam(isDuration);
-        param.styles = {
-          transform: stylesObj.transform,
-          transformOrigin: 'center center',
-          opacity: stylesObj.opacity
-        };
-        animation.transition(this.el, param, function() {
-          console.log('animation----2');
-        }); */
+        // this.animStyle = stylesObj;
+        // var param = this.animParam(isDuration);
+        // param.styles = {
+        //   transform: stylesObj.transform,
+        //   transformOrigin: 'center center',
+        //   opacity: stylesObj.opacity
+        // };
+        // animation.transition(this.el, param, function() {
+        //   console.log('animation----2');
+        // });
       },
 
       getRect(percent) {
