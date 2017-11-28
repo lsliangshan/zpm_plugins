@@ -1,5 +1,5 @@
 <template>
-  <div class="zpm-msg-container" ref="box" :style="[styles, animStyle]"  @touchend="hide">
+  <div class="zpm-msg-container" ref="box" :style="[styles, animStyle]">
     <div class="msg-content">
       <slot></slot>
       <web v-if="options.type === 'h5'" :src="options.url" :style="[webViweStyle]"></web>
@@ -55,24 +55,23 @@
     name: 'ZpmMsgBox',
     data() {
       return {
+        // 组件默认样式
         options: {
-          type: 'weex',
+          type: 'weex', // inner content 类型 weex或h5
           animationIn: 'slideUp',
           bgColor: '',
-          timingFunction: 'cubic-bezier(.215,.61,.355,1)',
+          timingFunction: 'cubic-bezier(.215,.61,.355,1)', // 动画类型
           duration: 300,
           delay: 0,
-          componentName: '',
-          content:
-            '<div style="position: absolute; top:200px;left:100px"><text style="color:white">测试测试</text></div>',
-          url: ''
+          componentName: '', // slot组件名字
+          url: '' // type为h5对应的url参数
         },
         styles: {}, // 默认样式
         animStyle: {}, // 动画样式
-        webViweStyle: {},
+        webViweStyle: {}, // webViwe样式
         deviceInfo: weex.config.env,
-        el: '',
-        showType: ''
+        el: '', // 执行动画的元素
+        showType: '' // 动画执行形式 slide或fade
       };
     },
     computed: {},
@@ -97,12 +96,13 @@
 
       // var param = this.animParam();
       // param.styles = {
-      //   transform: `translate3d(0, ${height * 2}px, 0)`,
+      //   transform: `translate(0, ${height * 2}px)`,
       //   transformOrigin: 'center center',
       //   opacity: 1
       // };
       // animation.transition(this.el, param, function() {});
 
+      // ZpmMsgBox组件显示方法
       this.$root.showMsgBox = args => {
         this.options = Object.assign({}, this.options, args);
         // 初始化动画入场的初始位置
@@ -112,6 +112,13 @@
         setTimeout(() => {
           this.show();
         }, 30);
+      };
+
+      // ZpmMsgBox组件隐藏方法
+      this.$root.hideMsgBox = () => {
+        // 传回组件信息
+        this.$root.ZpmMsgBox = this.options;
+        this.hide();
       };
     },
     methods: {
@@ -194,9 +201,7 @@
         //   transformOrigin: 'center center',
         //   opacity: stylesObj.opacity
         // };
-        // animation.transition(this.el, param, function() {
-        //   console.log('animation----2');
-        // });
+        // animation.transition(this.el, param, function() {});
       },
       // 初始化webview的样式函数
       initWebViweStyle() {
