@@ -1,6 +1,6 @@
 <template>
     <div class="zpm-top-bar-container">
-        <div class="zpm-top-bar" :style="{'background-color': options.bgColor}">
+        <div class="zpm-top-bar" :style="{'background-color': options.bgColor || '#FFFFFF'}">
             <div class="zpm-top-bar-return">
                 <image src="//img09.zhaopin.cn/2012/other/mobile/weex/searchJobResult/returnback3X.png" class="returnback"></image>
             </div>
@@ -14,12 +14,13 @@
                 </div>
             </div>
             <div class="returnbox-area" @click="goBack"></div>
-            <div class="zpm-top-bar-arrow" @click="show">
+            <div class="zpm-top-bar-arrow" @click="show" v-if="options.ifShow">
                 <image src="//img09.zhaopin.cn/2012/other/mobile/weex/icon_more_black.png" class="iconMorBlack"></image>
             </div>
+            <div class="zpm-top-bar-arrow" v-if="!options.ifShow"></div>
         </div>
-        <div class="zpm-foot-menu-container" ref="mask" :style="{height:getHeight(1)+'px'}">
-            <div class="zpm-foot-menu" ref="menu">
+        <div class="zpm-foot-menu-container" ref="mask" :style="[styles, animStyle]" @touchend="hide">
+            <div class="zpm-foot-menu" ref="menuframe">
                 <div class="zpm-foot-menu-frame">
                     <div class="zpm-foot-menu-line" v-for="(line, index) in options.footMenu" :key="index"
                          @click="line.action">
@@ -43,41 +44,32 @@
                     bgColor: '',
                     mainTitle: {
                         text: '智联招聘',
-                        style: {
-                            color: '#282828',
-                            fontSize: '36px'
-                        }
+                        style: {}
                     },
                     subTitle: {
                         text: '',
-                        style: {
-                            color: 'red',
-                            fontSize: '30px'
-                        }
+                        style: {}
                     },
+                    ifShow: true,
                     footMenu: [
                         {
                             name: '不看该公司的职位',
                             action: function () {
                                 alert('11')
                             },
-                            style: {
-                                color: '#007AFF',
-                                fontSize: '36px'
-                            }
+                            style: {}
                         },
                         {
                             name: '举报职位',
                             action: function () {
                                 alert('22')
                             },
-                            style: {
-                                color: '#FF3B30',
-                                fontSize: '36px'
-                            }
+                            style: {}
                         }
                     ]
                 },
+                styles: {}, // 默认样式
+                animStyle: {}, // 动画样式
                 deviceInfo: weex.config.env,
                 dpr: weex.config.env.dpr || weex.config.env.scale || 1
             };
@@ -96,13 +88,13 @@
                 Object.assign(that.options, args)
                 that.changeBgcolor(that.options)
             }
-            that.$root.showToast = function (args) {
+            that.$root.showMenu = function (args) {
                 Object.assign(that.options, args, {
                     shown: true
                 })
                 that.show(that.$refs[that.ref])
             }
-            that.$root.hideToast = function () {
+            that.$root.showMenu = function () {
                 Object.assign(that.options, {
                     shown: false
                 })
@@ -112,6 +104,19 @@
                 Object.assign(that.options, args)
                 that.optionsMenu(that.options)
             }
+        },
+        mounted () {
+            this.el = this.$refs['mask']
+            let height = this.getHeight(1);
+            // 初始化默认样式
+            this.styles = {
+                height: `${height}px`
+            };
+            // 初始化动画样式
+            this.animStyle = {
+                transform: `translate(0, ${height}px)`,
+                opacity: 1
+            };
         },
         methods: {
             getHeight (percent) {
@@ -133,6 +138,7 @@
                 const that = this
                 that.options.mainTitle = el.mainTitle
                 that.options.subTitle = el.subTitle
+                that.options.ifShow = el.ifShow
             },
             changeBgcolor (el) {
                 const that = this
@@ -142,12 +148,13 @@
                 const navigator = weex.requireModule('navigator')
                 navigator.pop();
             },
-            show (el) {
+            show () {
                 const that = this
                 const _maskRef = that.$refs['mask']
-                const _menuRef = that.$refs['menu']
+                const _menuframeRef = that.$refs['menuframe']
                 animation.transition(_maskRef, {
                     styles: {
+                        transform: 'translate(0, 0)',
                         opacity: 1
                     },
                     duration: 1,
@@ -155,31 +162,33 @@
                     delay: 0
                 }, function () {
                 })
-                animation.transition(_menuRef, {
+                animation.transition(_menuframeRef, {
                     styles: {
+                        transform: 'translate(0, 0)',
                         opacity: 1
                     },
-                    duration: 1,
-                    timingFunction: 'linear',
+                    duration: 800,
+                    timingFunction: 'ease',
                     delay: 0
                 }, function () {
                 })
             },
-            hide (el) {
+            hide () {
                 const that = this
                 const _maskRef = that.$refs['mask']
-                const _menuRef = that.$refs['menu']
-                console.log(_maskRef)
+                const _menuframeRef = that.$refs['menuframe']
                 animation.transition(_maskRef, {
                     styles: {
+                        transform: that.animStyle,
                         opacity: 0
                     },
-                    duration: 300,
+                    duration: 1,
                     delay: 0,
-                    timingFunction: 'ease'
+                    timingFunction: 'linear'
                 })
-                animation.transition(_menuRef, {
+                animation.transition(_menuframeRef, {
                     styles: {
+                        transform: that.animStyle,
                         opacity: 0
                     },
                     duration: 300,
@@ -276,7 +285,7 @@
         maring-right:32px;
     }
     .zpm-foot-menu-container{
-        position: absolute;
+        position: fixed;
         left: 0;
         top: 0;
         width: 750px;
@@ -288,12 +297,11 @@
         justify-content: center;
     }
     .zpm-foot-menu {
-        position: fixed;
+        position: absolute;
         bottom: 0px;
         left:0px;
         margin-bottom: 20px;
         width: 750px;
-        opacity: 0;
         flex-direction:column;
         justify-content: center;
         align-items: center;
