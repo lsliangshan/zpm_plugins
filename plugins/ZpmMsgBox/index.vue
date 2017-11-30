@@ -17,6 +17,7 @@
     position: fixed;
     left: 0;
     top: 0;
+    z-index: 99999;
     justify-content: center;
     align-items: center;
   }
@@ -128,12 +129,7 @@
 
         let animationStyle = this.options.animationIn;
 
-        // 初始化背景色
-        this.$set(
-          this.styles,
-          'backgroundColor',
-          options.bgColor || 'rgba(255, 255, 255, 1)'
-        );
+        // 初始化slide位置或fade透明度
         this.$set(this.styles, 'display', 'block');
 
         // 判断显示类型，类型：slide|fade
@@ -155,6 +151,11 @@
           width = width * 2;
           height = height * 2;
         }
+
+        // 初始化背景色
+        stylesObj.backgroundColor =
+          this.options.bgColor || 'rgba(255, 255, 255, 1)';
+
         // 初始化slide位置或fade透明度
         switch (animationStyle) {
           case 'slideUp':
