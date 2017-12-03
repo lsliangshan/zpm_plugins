@@ -1,0 +1,10 @@
+{
+  "name": "ZpmMovable",
+  "version": "0.0.1",
+  "description": "自定义可拖动组件",
+  "author": {
+    "name": "liang.shan",
+    "email": "liang.shan@zhaopin.com.cn"
+  },
+  "usage": "<zpm-movable x='0' y='0' from='[0, 0]' to='[600, 300]' axis='x' size='[100, 100]'>\n // ... html内容 \n</zpm-movable>"
+}
