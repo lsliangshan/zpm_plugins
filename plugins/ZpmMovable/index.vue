@@ -82,7 +82,6 @@
     },
     data () {
       return {
-        events: global.store.state.events,
         topMovable: false,
         width: 100,
         height: 100,
@@ -132,7 +131,7 @@
       },
       touchStart (e) {
         // 禁止页面滚动
-        global.eventHub.$emit(this.events.disableScroll)
+        global.eventHub.$emit('disable-scroll')
         this.topMovable = true
         if (this.startRef) {
           let _startRef = this.$root.ZpmMovable[this.startRef]
@@ -153,7 +152,7 @@
       },
       touchEnd (e) {
         // 恢复页面滚动
-        global.eventHub.$emit(this.events.resetScroll)
+        global.eventHub.$emit('reset-scroll')
         this.topMovable = false
         let movableRef = this.$refs[this.realRef]
         let _left = this.left
