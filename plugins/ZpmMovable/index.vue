@@ -14,7 +14,7 @@
         position: absolute;
         width: 100px;
         height: 100px;
-        overflow: hidden;
+        /*overflow: hidden;*/
     }
 </style>
 <script>
@@ -82,6 +82,10 @@
       scale: {
         type: [String, Number],
         default: 1
+      },
+      gap: {
+        type: [String, Number],
+        default: 40
       }
     },
     data () {
@@ -150,18 +154,28 @@
         })
         if (this.startRef) {
           let _startRef = this.$root.ZpmMovable[this.startRef]
-          if (this.axis !== 'y') this.minX = _startRef.left + _startRef.size[0]
-          if (this.axis !== 'x') this.minY = _startRef.top + _startRef.size[1]
+          if (this.axis !== 'y') this.minX = _startRef.left + Number(_startRef.gap)
+          if (this.axis !== 'x') this.minY = _startRef.top + Number(_startRef.gap)
+//          if (this.axis !== 'y') this.minX = _startRef.left + _startRef.size[0]
+//          if (this.axis !== 'x') this.minY = _startRef.top + _startRef.size[1]
         }
         if (this.endRef) {
           let _endRef = this.$root.ZpmMovable[this.endRef]
-          if (this.axis !== 'y') this.maxX = _endRef.left - _endRef.size[0]
-          if (this.axis !== 'x') this.maxY = _endRef.top - _endRef.size[1]
+          if (this.axis !== 'y') this.maxX = _endRef.left - Number(_endRef.gap)
+          if (this.axis !== 'x') this.maxY = _endRef.top - Number(_endRef.gap)
+//          if (this.axis !== 'y') this.maxX = _endRef.left - _endRef.size[0]
+//          if (this.axis !== 'x') this.maxY = _endRef.top - _endRef.size[1]
         }
         if (this.axis !== 'y') this.startX = e.changedTouches[0].pageX
         if (this.axis !== 'x') this.startY = e.changedTouches[0].pageY
       },
       touchMove (e) {
+        let _left = this.left
+        let _top = this.top
+        if (this.dataModelOrigin && this.dataModelOrigin[this.realRef]) {
+          this.dataModelOrigin[this.realRef].x = _left
+          this.dataModelOrigin[this.realRef].y = _top
+        }
         if (this.axis !== 'y') this.deltaX = e.changedTouches[0].pageX - this.startX
         if (this.axis !== 'x') this.deltaY = e.changedTouches[0].pageY - this.startY
       },
@@ -216,13 +230,17 @@
         }
         if (instance.startRef) {
           let _startRef = that.$root.ZpmMovable[instance.startRef]
-          if (instance.axis !== 'y') instance.minX = _startRef.left + _startRef.size[0]
-          if (instance.axis !== 'x') instance.minY = _startRef.top + _startRef.size[1]
+          if (instance.axis !== 'y') instance.minX = _startRef.left + Number(_startRef.gap)
+          if (instance.axis !== 'x') instance.minY = _startRef.top + Number(_startRef.gap)
+//          if (instance.axis !== 'y') instance.minX = _startRef.left + _startRef.size[0]
+//          if (instance.axis !== 'x') instance.minY = _startRef.top + _startRef.size[1]
         }
         if (instance.endRef) {
           let _endRef = that.$root.ZpmMovable[instance.endRef]
-          if (instance.axis !== 'y') instance.maxX = _endRef.left - _endRef.size[0]
-          if (instance.axis !== 'x') instance.maxY = _endRef.top - _endRef.size[1]
+          if (instance.axis !== 'y') instance.maxX = _endRef.left - Number(_endRef.gap)
+          if (instance.axis !== 'x') instance.maxY = _endRef.top - Number(_endRef.gap)
+//          if (instance.axis !== 'y') instance.maxX = _endRef.left - _endRef.size[0]
+//          if (instance.axis !== 'x') instance.maxY = _endRef.top - _endRef.size[1]
         }
         let _left = args.left || instance.left
         let _top = args.top || instance.top
@@ -278,13 +296,15 @@
     watch: {
       'deltaX': function (value) {
         let _tempX = this.eleX + value
-        if (_tempX >= this.minX - this.width && _tempX <= this.maxX + this.width) {
+        if (_tempX >= this.minX - Number(this.gap) && _tempX <= this.maxX + Number(this.gap)) {
+//        if (_tempX >= this.minX - this.width && _tempX <= this.maxX + this.width) {
           this.left = this.eleX + value
         }
       },
       'deltaY': function (value) {
         let _tempY = this.eleY + value
-        if (_tempY >= this.minY - this.height && _tempY <= this.maxY + this.height) {
+        if (_tempY >= this.minY - Number(this.gap) && _tempY <= this.maxY + Number(this.gap)) {
+//        if (_tempY >= this.minY - this.height && _tempY <= this.maxY + this.height) {
           this.top = this.eleY + value
         }
       }
