@@ -1,7 +1,7 @@
 <template>
     <div class="zpm_movable_container"
          :ref="realRef"
-         :style="{transform: `translate(${calcWeb(left)}px, ${calcWeb(top)}px)`, width: `${calcWeb(width)}px`, height: `${calcWeb(height)}px`, zIndex: topMovable ? '999999' : '1'}"
+         :style="{transform: `translate(${calcWeb(left)}px, ${calcWeb(top)}px) scale(${eleScale})`, width: `${calcWeb(width)}px`, height: `${calcWeb(height)}px`, zIndex: topMovable ? '999999' : '1'}"
          @touchstart="touchStart"
          @touchmove="touchMove"
          @touchend="touchEnd"
@@ -78,6 +78,10 @@
       },
       dataModelOrigin: {
         type: Object
+      },
+      scale: {
+        type: [String, Number],
+        default: 1
       }
     },
     data () {
@@ -100,7 +104,8 @@
         startRefX: 0,
         startRefY: 0,
         endRefX: 0,
-        endRefY: 0
+        endRefY: 0,
+        eleScale: 1
       };
     },
     computed: {
@@ -133,6 +138,16 @@
         // 禁止页面滚动
         global.eventHub.$emit('disable-scroll')
         this.topMovable = true
+        let movableRef = this.$refs[this.realRef]
+        this.eleScale = this.scale
+        animation.transition(movableRef, {
+          styles: {
+            transform: `translate(${this.left}px, ${this.top}px) scale(${this.eleScale})`
+          },
+          duration: 100,
+          timingFunction: 'cubic-bezier(.215,.61,.355,1)',
+          delay: 0
+        })
         if (this.startRef) {
           let _startRef = this.$root.ZpmMovable[this.startRef]
           if (this.axis !== 'y') this.minX = _startRef.left + _startRef.size[0]
@@ -179,9 +194,10 @@
           this.dataModelOrigin[this.realRef].x = _left
           this.dataModelOrigin[this.realRef].y = _top
         }
+        this.eleScale = 1
         animation.transition(movableRef, {
           styles: {
-            transform: `translate(${_left}px, ${_top}px)`
+            transform: `translate(${_left}px, ${_top}px) scale(${this.eleScale})`
           },
           duration: 100,
           timingFunction: 'cubic-bezier(.215,.61,.355,1)',
@@ -222,7 +238,7 @@
         } else {}
         animation.transition(instance.$refs[ref], {
           styles: {
-            transform: `translate(${_left}px, ${_top}px)`
+            transform: `translate(${_left}px, ${_top}px) scale(${instance.scale})`
           },
           duration: 100,
           timingFunction: 'cubic-bezier(.215,.61,.355,1)',
