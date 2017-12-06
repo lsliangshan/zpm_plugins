@@ -140,7 +140,7 @@
       },
       touchStart (e) {
         // 禁止页面滚动
-        global.eventHub.$emit('disable-scroll')
+        this.$emit('zpmstart', {ref: this.realRef})
         this.topMovable = true
         let movableRef = this.$refs[this.realRef]
         this.eleScale = this.scale
@@ -170,6 +170,7 @@
         if (this.axis !== 'x') this.startY = e.changedTouches[0].pageY
       },
       touchMove (e) {
+        this.$emit('zpmmove', {ref: this.realRef})
         let _left = this.left
         let _top = this.top
         if (this.dataModelOrigin && this.dataModelOrigin[this.realRef]) {
@@ -181,7 +182,7 @@
       },
       touchEnd (e) {
         // 恢复页面滚动
-        global.eventHub.$emit('reset-scroll')
+        this.$emit('zpmend', {ref: this.realRef})
         this.topMovable = false
         let movableRef = this.$refs[this.realRef]
         let _left = this.left
@@ -217,7 +218,6 @@
           timingFunction: 'cubic-bezier(.215,.61,.355,1)',
           delay: 0
         })
-        this.$emit('zpmend', {ref: this.realRef})
       }
     },
     components: {},
