@@ -264,7 +264,7 @@
     align-items: center;
     padding-bottom: 14px;
     padding-top: 65px;
-    height: 140px;
+    height: 128px;
     width: 750px;
     background-color: #ffffff;
     opacity: 1;
@@ -295,14 +295,17 @@
   }
   .zpm-top-bar-maintitle {
     width: 444px;
-    height: 58px;
+    height: 40px;
+    margin-top: 10px;
+    margin-bottom: 10px;
     align-items: center;
   }
   .zpm-top-bar-maintitle-text {
     max-width: 444px;
-    font-size: 36px;
+    font-size: 32px;
+    font-weight: 400;
     color: #282828;
-    line-height: 58px;
+    line-height: 40px;
     overflow: hidden;
     text-overflow: ellipsis;
     lines: 1;
@@ -314,9 +317,10 @@
   }
   .zpm-top-bar-subtitle-text {
     max-width: 444px;
-    font-size: 30px;
-    color: red;
-    line-height: 58px;
+    font-size: 32px;
+    font-weight: bold;
+    color: #ff5c56;
+    line-height: 32px;
     overflow: hidden;
     text-overflow: ellipsis;
     lines: 1;
