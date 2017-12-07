@@ -18,10 +18,12 @@
             </div>
             <div class="zpm-top-bar-arrow" v-if="!options.ifShow"></div>
         </div>
+        <!--<div class="zpm-foot-menu-container" ref="mask" :style="{height: getHeight(1)+'px', opacity: 1, transform: 'translate(0, '+ getHeight(1) +'px)'}" @touchend="hide">-->
         <div class="zpm-foot-menu-container" ref="mask" :style="initStyle" @touchend="hide">
+            <!--<div class="zpm-foot-menu" ref="menuframe" :style="{transform: 'translate(0, '+ menuH +'px)'}">-->
             <div class="zpm-foot-menu" ref="menuframe" :style="footMenuAnimStyle">
                 <div class="zpm-foot-menu-frame">
-                    <div class="zpm-foot-menu-line" v-for="(line, index) in options.footMenu" :key="index"
+                    <div class="zpm-foot-menu-line" :class="['zpm-foot-menu-line-'+index]" v-for="(line, index) in options.footMenu" :key="index"
                          @click="line.action">
                         <text class="zpm-foot-menu-content" :style="line.style">{{line.name}}</text>
                     </div>
@@ -372,16 +374,15 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    border-radius: 14px;
   }
-  /*.zpm-foot-menu-line0 {
+  .zpm-foot-menu-line-0 {
     border-top-left-radius: 14px;
     border-top-right-radius: 14px;
   }
-  .zpm-foot-menu-line1 {
+  .zpm-foot-menu-line-1 {
     border-bottom-left-radius: 14px;
     border-bottom-right-radius: 14px;
-  }*/
+  }
   .zpm-foot-menu-content {
     font-size: 36px;
     font-weight: 300;
@@ -398,11 +399,10 @@
     justify-content: center;
     background-color: #ffffff;
     border-radius: 14px;
-    font-size: 36px;
-    color: #007aff;
   }
   .zpm-foot-menu-cancel-txt {
     font-size: 36px;
-    font-weight: 300;
+    color: #007aff;
+    font-weight: 400;
   }
 </style>

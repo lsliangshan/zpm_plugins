@@ -12,7 +12,7 @@
     </div>
   </div>
 </template>
-<style>
+<style scoped>
   .zpm-msg-container {
     position: fixed;
     left: 0;
@@ -77,9 +77,8 @@
     },
     computed: {},
     components: {},
-    created() {},
-    mounted() {
-      this.el = this.$refs.box;
+    mounted() {},
+    created() {
       let width = this.getRect(1).width;
       let height = this.getRect(1).height;
       // 初始化默认样式
@@ -180,12 +179,13 @@
         if (isDuration) {
           let that = this;
           let param = this.animParam(isDuration);
+          let element = this.$refs.box;
           param.styles = {
             transform: stylesObj.transform,
             transformOrigin: 'center center',
             opacity: stylesObj.opacity
           };
-          animation.transition(this.el, param, function() {
+          animation.transition(element, param, function() {
             if (animationStyle === 'fadeIn') {
               stylesObj.display = 'none';
               that.animStyle = stylesObj;
@@ -237,12 +237,13 @@
       },
       show() {
         let param = this.animParam(true);
+        let element = this.$refs.box;
         param.styles = {
           transform: 'translate(0, 0)',
           // transformOrigin: 'center center',
           opacity: 1
         };
-        animation.transition(this.el, param, function() {});
+        animation.transition(element, param, function() {});
       },
       hide() {
         this.initPosition(true);
