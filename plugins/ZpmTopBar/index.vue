@@ -19,7 +19,7 @@
             <div class="zpm-top-bar-arrow" v-if="!options.ifShow"></div>
         </div>
         <!--<div class="zpm-foot-menu-container" ref="mask" :style="{height: getHeight(1)+'px', opacity: 1, transform: 'translate(0, '+ getHeight(1) +'px)'}" @touchend="hide">-->
-        <div class="zpm-foot-menu-container" ref="mask" :style="initStyle" @touchend="hide">
+        <div class="zpm-foot-menu-container" ref="mask" :style="initStyle" @click="hide">
             <!--<div class="zpm-foot-menu" ref="menuframe" :style="{transform: 'translate(0, '+ menuH +'px)'}">-->
             <div class="zpm-foot-menu" ref="menuframe" :style="footMenuAnimStyle">
                 <div class="zpm-foot-menu-frame">
@@ -77,7 +77,7 @@
         },
         initStyle: {}, // 默认样式
         footMenuAnimStyle: {}, // menu默认样式
-        menuH: 400,
+        menuH: 500,
         deviceInfo: weex.config.env,
         dpr: weex.config.env.dpr || weex.config.env.scale || 1
       };
@@ -344,7 +344,7 @@
     width: 750px;
     padding-left: 32px;
     padding-right: 32px;
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: rgba(0, 0, 0, 0.4);
     opacity: 0;
     flex-direction: row;
     justify-content: center;
@@ -367,8 +367,8 @@
   }
   .zpm-foot-menu-line {
     width: 686px;
-    height: 80px;
-    line-height: 80px;
+    height: 110px;
+    line-height: 110px;
     font-size: 36px;
     background-color: #ffffff;
     border-bottom-width: 1px;
@@ -380,24 +380,24 @@
     text-align: center;
   }
   .zpm-foot-menu-line-0 {
-    border-top-left-radius: 14px;
-    border-top-right-radius: 14px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
   }
   .zpm-foot-menu-line-1 {
-    border-bottom-left-radius: 14px;
-    border-bottom-right-radius: 14px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
   }
   .zpm-foot-menu-content {
     font-size: 36px;
-    font-weight: 300;
+    font-weight: 400;
     width: auto !important;
   }
   .zpm-foot-menu-cancel {
     margin-top: 20px;
     margin-bottom: 20px;
     width: 686px;
-    height: 80px;
-    line-height: 80px;
+    height: 110px;
+    line-height: 110px;
     align-items: center;
     text-align: center;
     justify-content: center;
