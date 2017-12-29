@@ -1,12 +1,13 @@
 {
   "//": [
     "this.$root.zpmConsole({",
+      "title: '标题',",
       "type: 'normal',",
       "content: [\"string 1\", \"string 2\"]",
     "})"
   ],
   "name": "ZpmConsole",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "调试工具-console",
   "author": {
     "name": "liang.shan",
