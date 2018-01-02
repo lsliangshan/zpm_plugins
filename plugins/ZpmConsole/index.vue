@@ -309,6 +309,9 @@
         padding-left: 20px;
         padding-right: 20px;
         background-color: #ffffff;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
     }
     .zpm_console_menu_item_border_true {
         border-top-width: 1px;
@@ -319,15 +322,15 @@
         background-color: rgba(169,134,255,0.38);
     }
     .zpm_console_menu_item_text {
-        width: 300px;
-        height: 90px;
-        line-height: 90px;
+        /*width: 300px;*/
+        /*height: 90px;*/
+        /*line-height: 90px;*/
         font-size: 26px;
         color: #333333;
     }
-    .zpm_console_menu_item_text:active {
-        color: #FFFFFF;
-    }
+    /*.zpm_console_menu_item_text:active {*/
+    /*color: #FFFFFF;*/
+    /*}*/
     .zpm_console_format_data_container {
         position: fixed;
         left: 0;
@@ -408,7 +411,6 @@
   const animation = weex.requireModule('animation')
   const clipboard = weex.requireModule('clipboard')
   const dom = weex.requireModule('dom')
-  const picker = weex.requireModule('picker')
   export default {
     name: 'ZpmConsole',
     props: ['height'],
@@ -615,10 +617,18 @@
             break
           case this.actionKeys.jsonParse:
             // JSON格式化
-            this.formatData = {
-              type: this.currentItem.type,
-              title: this.currentItem.title,
-              content: this.formatJsonContent(this.currentItem.content)
+            try {
+              this.formatData = {
+                type: this.currentItem.type,
+                title: this.currentItem.title,
+                content: this.formatJsonContent(this.currentItem.content)
+              }
+            } catch (err) {
+              this.htmlItems.push({
+                title: '错误',
+                type: 'error',
+                content: [JSON.stringify(err)]
+              })
             }
             this.showFormatContainer();
             break
